@@ -5,6 +5,20 @@
 import { useState } from "react";
 
 
+
+/*
+  Functional component. Everything that's in the return statement is the JSX
+  JSX - Describes the UI component that it will render.
+  <button> is a JSX component
+  return = whatever comes after is returned as a value to the caller of the function.
+
+  The params values of these components are known as: 'props'  short for   'properties'. 
+  It's a way for passing data from parent to child components in React
+
+  We're using destructuring to extract the 'value' and 'onSquareclick' properties from 'props' object
+
+ */
+
 function Square( {value, onSquareClick} ) {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -15,13 +29,14 @@ function Square( {value, onSquareClick} ) {
 
 
 function Board({xIsNext, squares, onPlay}) {
+
+  /* i = takes the index of the square that must be updated   */
   function handleClick(i){
     if(calculateWinner(squares) || squares[i]){
         return;
     }
     const nextSquares = squares.slice();
     
-
     /* Instead of using the if condition, I used the ternary operator to write less code
     */
     xIsNext ? (nextSquares[i] = "X") : (nextSquares[i] = "O");
@@ -29,6 +44,8 @@ function Board({xIsNext, squares, onPlay}) {
 
   }
 
+
+  /* calculates the winner or next player */
   const winner = calculateWinner(squares);
   let status;
   winner ? (status = 'Winner: ' + winner) : (status = "Next player: " + (xIsNext ? "X": "O"))
@@ -73,17 +90,16 @@ export default function Game () {
   function jumpTo(nextMove){
     setCurrentMove(nextMove);
   }
-  
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0){
-      description = 'Go to move #'+ move;  
-    }else{
-      description = 'Go to game start';
-    }
+
+  const moves = history.map((squares, moveIdx) => {
+    let description = moveIdx === currentMove ? `Estas en el movimiento #${moveIdx}` : `Go to move ${moveIdx}`
     return(
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+      <li key={moveIdx}>
+        {moveIdx !== currentMove ? (
+         <button onClick={() => jumpTo(moveIdx)}>{description}</button>
+        ) : (
+          <div>{description}</div>
+        )}
       </li>
     );
   });
@@ -95,12 +111,7 @@ export default function Game () {
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
-
       </div>
-
-
-
-
     </div>
   );
 }
